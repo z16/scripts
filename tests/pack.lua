@@ -250,8 +250,6 @@ assert_pack('pack/bq 4', 'q3Cb1H', string.char(0x05, 0xFF, 0x01, 0x34, 0x12), tr
 
 for format, list in pairs(cache) do
     for _, entry in ipairs(list) do
-        -- if format:match('b5qb10S4') then
-            assert.sequence_equals({string.unpack(entry.packed, format)}, entry.values, 'un' .. entry.tag)
-        -- end
+        assert.sequence_equals({string.unpack(entry.packed, format)}, entry.values, 'un' .. entry.tag)
     end
 end
