@@ -147,10 +147,9 @@ test = function(name)
 end
 
 test('pack')
--- test('sets')
--- test('lists')
--- test('enumerable')
+test('sets')
+test('lists')
+test('enumerable')
 
 print()
 print('Finished tests!')
-
