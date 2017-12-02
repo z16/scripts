@@ -1,4 +1,3 @@
-require('debug')
 require('string')
 require('table')
 
@@ -10,7 +9,6 @@ settings = {
 }
 
 current = nil
-last_tag = nil
 results = {}
 
 util = {
@@ -32,7 +30,6 @@ util = {
         print('    - ' .. tag)
     end,
     assert = function(condition, tag, message)
-        last_tag = tag
         results[current][condition == true and 'pass' or 'fail'][tag] = message
     end,
     run = function(...)
@@ -125,10 +122,10 @@ test = function(name)
 
     -- Run test
     print()
-    print('Running tests for ' .. current)
+    print('Running tests for ' .. current .. '...')
     require('tests.' .. current)
 
-    print('Results for ' .. current .. ':')
+    print('Results:')
 
     print('  - Passed tests: ' .. tostring(util.rawcount(results[current].pass)))
     if settings.show_pass then

@@ -109,4 +109,3 @@ assert.is_false(S{}:any(), 'sets/any 1')
 assert.is_true(S{1}:any(), 'sets/any 2')
 assert.is_false(S{1, 2, 3}:any(function(v) return v > 3 end), 'sets/any 3')
 assert.is_true(S{1, 2, 4, 3}:any(function(v) return v > 3 end), 'sets/any 3')
-

@@ -47,7 +47,7 @@ do
     assert.equals(l[2], 5, 'lists/new index 1')
 end
 assert.error(function() L{}[1] = 1 end, 'lists/new index 2')
-assert.no_error(function() L{1, 2, 3}['a'] = 1 end, 'lists/new index 3')
+assert.error(function() L{1, 2, 3}['a'] = 1 end, 'lists/new index 3')
 
 assert.equals(tostring(L{}), '[]', 'lists/tostring 1')
 assert.equals(tostring(L{1, 2, 3}), '[1, 2, 3]', 'lists/tostring 2')
@@ -76,18 +76,23 @@ do
 end
 
 do
+    local original = L{}
+    local returned = original:insert(1, 1)
+    assert.equals(returned, nil, 'lists/insert exists 1')
+    assert.equals(original, L{1}, 'lists/insert 1')
+end
+do
     local original = L{1, 2, 3}
     local returned = original:insert(3, 4)
-    assert.equals(returned, nil, 'lists/insert exists 1')
-    assert.equals(original, L{1, 2, 4, 3}, 'lists/insert 1')
+    assert.equals(returned, nil, 'lists/insert exists 2')
+    assert.equals(original, L{1, 2, 4, 3}, 'lists/insert 2')
 end
 do
     local original = L{1, 2, 3}
     local returned = original:insert(2, 4)
-    assert.equals(returned, nil, 'lists/insert exists 2')
-    assert.equals(original, L{1, 4, 2, 3}, 'lists/insert 2')
+    assert.equals(returned, nil, 'lists/insert exists 3')
+    assert.equals(original, L{1, 4, 2, 3}, 'lists/insert 3')
 end
-assert.error(function() L{}:insert(1, 1) end, L{1}, 'lists/insert 3')
 
 do
     local original = L{1, 2}
@@ -136,4 +141,3 @@ do
     assert.equals(l, L{'a', 'c'}, 'lists/remove 1')
     assert.error(function() L{1, 2, 3}:remove(4) end, 'lists/remove 2')
 end
-

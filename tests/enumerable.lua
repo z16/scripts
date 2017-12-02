@@ -1,12 +1,15 @@
 -- General tests
 
 local g_count_pre = util.rawcount(_G)
-local make = require('enumerable')
+local enumerable = require('enumerable')
 
--- Check global variable leaking
 assert.equals(util.rawcount(_G), g_count_pre, 'enumerable/_G count')
-assert.exists(make, 'enumerable/return')
-assert.type(make, 'function', 'enumerable/return type')
+assert.exists(enumerable, 'enumerable/return')
+assert.type(enumerable, 'table', 'enumerable/return type')
+assert.exists(enumerable.init_type, 'enumerable/return init_type')
+assert.type(enumerable.init_type, 'function', 'enumerable/return init_type type')
+assert.exists(enumerable.wrap, 'enumerable/return wrap')
+assert.type(enumerable.wrap, 'function', 'enumerable/return wrap type')
 
 -- Helpers
 
@@ -192,16 +195,15 @@ local test_filled = function(meta, suffix)
     assert.error(function() t:single(false) end, msg('enumerable/single 5'))
 end
 
---        assert.(, msg('enumerable/'))
-
 local test_enumerable = function(meta, tag)
-    local result = make(meta)
-    assert.exists(result, 'enumerable/result ' .. tag)
+    local constructor = enumerable.init_type(meta)
+    assert.exists(constructor, 'enumerable/result ' .. tag)
     assert.equals(util.rawcount(meta), 6, 'enumerable/meta count ' .. tag)
 
     test_empty(meta, tag)
+    test_filled(meta, tag)
 
-    return result
+    return constructor
 end
 
 do -- basic
@@ -209,40 +211,32 @@ do -- basic
 
     local constructor = test_enumerable(meta, 'basic')
 
-    test_filled(meta, 'basic')
+    local t = setmetatable({10, 20, 30}, meta)
+    assert.equals(t:where(function(v) return v > 10 end)[1], 20, 'enumerable/index (custom: basic) 1')
+    assert.equals(t:where(function(v) return v > 10 end)[2], 30, 'enumerable/index (custom: basic) 2')
+    assert.equals(t:where(function(v) return v > 10 end)[3], nil, 'enumerable/index (custom: basic) 3')
 end
 
 do -- add append
     local meta
     meta = {
-        __create = function()
-            return setmetatable({}, meta)
-        end,
         __add_element = function(t, v)
-            t[#t] = v
+            t[#t + 1] = v
         end
     }
 
     local constructor = test_enumerable(meta, 'add append')
-
-    test_filled(meta, 'add append')
 end
 
 do -- remove
     local meta
     meta = {
-        __create = function()
-            return setmetatable({}, meta)
-        end,
         __remove_key = function(t, k)
             t[k] = nil
         end
     }
 
     local constructor = test_enumerable(meta, 'remove')
-
-    test_filled(meta, 'remove')
 end
 
-assert.equals(util.rawcount(_G), g_count_pre, 'enumerable/_G count')
-
+assert.equals(util.rawcount(_G), g_count_pre, 'enumerable/_G count final')
